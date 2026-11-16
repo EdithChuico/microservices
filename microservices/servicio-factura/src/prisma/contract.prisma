@@ -1,4 +1,4 @@
-use prisma-8
+//use prisma-8
 
 model Factura {
   codigo String @unique
@@ -6,7 +6,7 @@ model Factura {
   cod_cliente Int32
   total Decimal128
   descuento Decimal128
-  iva Deciaml128
+  iva Decimal128
   total_a_pagar Decimal128
 }
 
