@@ -1,0 +1,15 @@
+from fastapi import FastAPI
+from config.database import engine, Base
+from router.producto_router import router as producto_router
+
+app= FastAPI(
+    title ="Servicio Producto",
+    description="Servicio desarrollado en clases de Arquitectura de Software",
+    version="1.0"
+)
+Base.metadata.create_all(bind=engine);
+app.include_router(producto_router)
+
+@app.get("/")
+def inicio():
+    return {"mensaje": "Servicio"}
