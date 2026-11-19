@@ -36,6 +36,19 @@
                   "kind": "scalar"
                 }
               },
+              "detalles": {
+                "many": {
+                  "elementNullable": false
+                },
+                "nullable": false,
+                "type": {
+                  "entityKind": "valueObject",
+                  "entityName": "DetalleFactura",
+                  "kind": "valueObject",
+                  "namespaceId": "__unbound__",
+                  "plane": "storage"
+                }
+              },
               "fecha": {
                 "nullable": false,
                 "type": {
@@ -77,6 +90,9 @@
                 },
                 "descuento": {
                   "field": "descuento"
+                },
+                "detalles": {
+                  "field": "detalles"
                 },
                 "fecha": {
                   "field": "fecha"
@@ -134,6 +150,37 @@
                     "descuento": {
                       "bsonType": "double"
                     },
+                    "detalles": {
+                      "bsonType": "array",
+                      "items": {
+                        "additionalProperties": false,
+                        "bsonType": "object",
+                        "properties": {
+                          "cantidad": {
+                            "bsonType": "int"
+                          },
+                          "cod_factura": {
+                            "bsonType": "int"
+                          },
+                          "cod_producto": {
+                            "bsonType": "int"
+                          },
+                          "codigo": {
+                            "bsonType": "int"
+                          },
+                          "subtotal": {
+                            "bsonType": "double"
+                          }
+                        },
+                        "required": [
+                          "cantidad",
+                          "cod_factura",
+                          "cod_producto",
+                          "codigo",
+                          "subtotal"
+                        ]
+                      }
+                    },
                     "fecha": {
                       "bsonType": "date"
                     },
@@ -152,6 +199,7 @@
                     "cod_cliente",
                     "codigo",
                     "descuento",
+                    "detalles",
                     "fecha",
                     "iva",
                     "total",
@@ -210,7 +258,7 @@
         "kind": "mongo-database"
       }
     },
-    "storageHash": "ccb9a10e3df5978462cb6dbd7c0073d81348180f2eb993d90c836fe6281a2ffc"
+    "storageHash": "69d3d84d3db5adb570b850b3074b56bf7e473e93426f7a3db1c491408c3413fe"
   },
   "capabilities": {},
   "extensions": {},

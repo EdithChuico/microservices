@@ -8,6 +8,7 @@ model Factura {
   descuento Double
   iva Double
   total_a_pagar Double
+  detalles DetalleFactura[]
 }
 
 type DetalleFactura {

@@ -70,12 +70,127 @@ export class FacturaService {
 
         return this.consultar(codigo);
     }
-    //agregarDetalle
 
-    //Actualizar detalle con PATH
+    private recalcularTotales(detalles: DetalleFactura[], descuentoActual: number) {
+        const total = Math.round(
+            detalles.reduce((acc, item) => acc + Number(item.subtotal), 0) * 100
+        ) / 100;
+        const iva = Math.round(total * 0.15 * 100) / 100;
+        const descuento = Number(descuentoActual) || 0;
+        const total_a_pagar = Math.round((total + iva - descuento) * 100) / 100;
 
-    //eliminarDetalle
+        return { total, iva, total_a_pagar };
+    }
+
+    // Actualizar detalle con PATCH
+    async actualizarDetalle(
+        codigoFactura: string,
+        codigoDetalle: number,
+        data: Partial<DetalleFactura>,
+    ) {
+        const factura = await this.consultar(codigoFactura);
+        const detallesActuales: DetalleFactura[] = (factura as any).detalles ?? [];
+        const index = detallesActuales.findIndex((d) => d.codigo === Number(codigoDetalle));
+        if (index === -1) {
+            throw new NotFoundException(`Detalle con código ${codigoDetalle} no encontrado en la factura`);
+        }
+
+        const detalleActual = detallesActuales[index];
+        const detalleActualizado: DetalleFactura = {
+            ...detalleActual, ...data, codigo: detalleActual.codigo
+        };
+
+        if ((data.cantidad !== undefined || data.cod_producto !== undefined) && data.subtotal === undefined) {
+            const precio = await this.obtenerPrecioProducto(detalleActualizado.cod_producto);
+            detalleActualizado.subtotal = Math.round(precio * Number(detalleActualizado.cantidad) * 100) / 100;
+        }
+
+        const nuevosDetalles = [...detallesActuales];
+        nuevosDetalles[index] = detalleActualizado;
+
+        const { total, iva, total_a_pagar } = this.recalcularTotales(nuevosDetalles, factura.descuento);
+
+        await db.orm.Factura.where({ codigo: codigoFactura }).update({
+            detalles: nuevosDetalles, total, iva, total_a_pagar
+        } as any);
+
+        return this.consultar(codigoFactura);
+    }
+
+    // Eliminar detalle
+    async eliminarDetalle(codigoFactura: string, codigoDetalle: number) {
+        const factura = await this.consultar(codigoFactura);
+        const detallesActuales: DetalleFactura[] = (factura as any).detalles ?? [];
+        const existe = detallesActuales.some((d) => d.codigo === Number(codigoDetalle));
+        if (!existe) {
+            throw new NotFoundException(`Detalle con código ${codigoDetalle} no encontrado en la factura`);
+        }
+        const nuevosDetalles = detallesActuales.filter((d) => d.codigo !== Number(codigoDetalle));
+        const { total, iva, total_a_pagar } = this.recalcularTotales(nuevosDetalles, factura.descuento);
+
+        await db.orm.Factura.where({ codigo: codigoFactura }).update({
+            detalles: nuevosDetalles, total, iva, total_a_pagar
+        } as any);
+
+        return this.consultar(codigoFactura);
+    }
 
     //calcularTotal  (con consulta al microservicio Productos)
+    async calcularTotal(codigoFactura: string) {
+        const factura = await this.consultar(codigoFactura);
+        const detallesActuales: DetalleFactura[] = (factura as any).detalles ?? [];
 
+        if (detallesActuales.length === 0) {
+            throw new BadRequestException('La factura no tiene detalles para calcular');
+        }
+        const detallesRecalculados: DetalleFactura[] = await Promise.all(
+            detallesActuales.map(async (detalle) => {
+                const precioUnitario = await this.obtenerPrecioProducto(detalle.cod_producto);
+                const subtotal = Math.round(precioUnitario * Number(detalle.cantidad) * 100) / 100;
+
+                return { ...detalle, subtotal };
+            }),
+        );
+
+        const { total, iva, total_a_pagar } = this.recalcularTotales(detallesRecalculados, factura.descuento,);
+
+        await db.orm.Factura.where({ codigo: codigoFactura }).update({
+            detalles: detallesRecalculados, total, iva, total_a_pagar
+        } as any);
+
+        return this.consultar(codigoFactura);
+    }
+
+    // Método para comunicarse con servicio-producto
+    private async obtenerPrecioProducto(codProducto: number): Promise<number> {
+        const baseUrl = process.env.PRODUCTO_SERVICE_URL || 'http://localhost:8000';
+        const url = `${baseUrl}/api/${codProducto}`;
+
+        try {
+            const response = await fetch(url);
+
+            if (response.status === 404) {
+                throw new NotFoundException(`Producto con código ${codProducto} no existe en servicio-producto`);
+            }
+            if (!response.ok) {
+                throw new BadRequestException(`Error al consultar producto ${codProducto}: HTTP ${response.status}`);
+            }
+
+            const producto = await response.json();
+            const precio = Number(producto.precio ?? producto.price ?? producto.valor_unitario);
+
+            if (isNaN(precio)) {
+                throw new BadRequestException(`El producto ${codProducto} no tiene un campo de precio válido`);
+            }
+
+            return precio;
+        } catch (error) {
+            if (error instanceof NotFoundException || error instanceof BadRequestException) {
+                throw error;
+            }
+            throw new BadRequestException(
+                `No se pudo conectar con servicio-producto en ${url}. Verifica que esté levantado.`,
+            );
+        }
+    }
 }
