@@ -32,7 +32,7 @@
               "descuento": {
                 "nullable": false,
                 "type": {
-                  "codecId": "mongo/decimal128@1",
+                  "codecId": "mongo/double@1",
                   "kind": "scalar"
                 }
               },
@@ -46,21 +46,21 @@
               "iva": {
                 "nullable": false,
                 "type": {
-                  "codecId": "mongo/decimal128@1",
+                  "codecId": "mongo/double@1",
                   "kind": "scalar"
                 }
               },
               "total": {
                 "nullable": false,
                 "type": {
-                  "codecId": "mongo/decimal128@1",
+                  "codecId": "mongo/double@1",
                   "kind": "scalar"
                 }
               },
               "total_a_pagar": {
                 "nullable": false,
                 "type": {
-                  "codecId": "mongo/decimal128@1",
+                  "codecId": "mongo/double@1",
                   "kind": "scalar"
                 }
               }
@@ -132,19 +132,19 @@
                       "bsonType": "string"
                     },
                     "descuento": {
-                      "bsonType": "decimal"
+                      "bsonType": "double"
                     },
                     "fecha": {
                       "bsonType": "date"
                     },
                     "iva": {
-                      "bsonType": "decimal"
+                      "bsonType": "double"
                     },
                     "total": {
-                      "bsonType": "decimal"
+                      "bsonType": "double"
                     },
                     "total_a_pagar": {
-                      "bsonType": "decimal"
+                      "bsonType": "double"
                     }
                   },
                   "required": [
@@ -210,7 +210,7 @@
         "kind": "mongo-database"
       }
     },
-    "storageHash": "c1a313be5282472e775b65dd38fbdc535f73211b86708c5a4f678f6db6ebe186"
+    "storageHash": "ccb9a10e3df5978462cb6dbd7c0073d81348180f2eb993d90c836fe6281a2ffc"
   },
   "capabilities": {},
   "extensions": {},

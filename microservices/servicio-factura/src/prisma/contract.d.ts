@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-mongo/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'c1a313be5282472e775b65dd38fbdc535f73211b86708c5a4f678f6db6ebe186'>;
+  StorageHashBase<'ccb9a10e3df5978462cb6dbd7c0073d81348180f2eb993d90c836fe6281a2ffc'>;
 export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<'251b3ce23f6c9f561892e7c1af9d2cc941a13d64ba1aa7226b90036b09568cc3'>;
@@ -112,11 +112,11 @@ type ContractBase = Omit<
                     readonly _id: { readonly bsonType: 'objectId' };
                     readonly cod_cliente: { readonly bsonType: 'int' };
                     readonly codigo: { readonly bsonType: 'string' };
-                    readonly descuento: { readonly bsonType: 'decimal' };
+                    readonly descuento: { readonly bsonType: 'double' };
                     readonly fecha: { readonly bsonType: 'date' };
-                    readonly iva: { readonly bsonType: 'decimal' };
-                    readonly total: { readonly bsonType: 'decimal' };
-                    readonly total_a_pagar: { readonly bsonType: 'decimal' };
+                    readonly iva: { readonly bsonType: 'double' };
+                    readonly total: { readonly bsonType: 'double' };
+                    readonly total_a_pagar: { readonly bsonType: 'double' };
                   };
                   readonly required: readonly [
                     '_id',
@@ -192,7 +192,7 @@ type ContractBase = Omit<
               };
               readonly descuento: {
                 readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/decimal128@1' };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/double@1' };
               };
               readonly fecha: {
                 readonly nullable: false;
@@ -200,15 +200,15 @@ type ContractBase = Omit<
               };
               readonly iva: {
                 readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/decimal128@1' };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/double@1' };
               };
               readonly total: {
                 readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/decimal128@1' };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/double@1' };
               };
               readonly total_a_pagar: {
                 readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/decimal128@1' };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/double@1' };
               };
             };
             readonly relations: Record<string, never>;

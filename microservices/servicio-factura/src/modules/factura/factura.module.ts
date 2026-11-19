@@ -6,4 +6,4 @@ import { FacturaService } from './factura.service.js';
   controllers: [FacturaController],
   providers: [FacturaService]
 })
-export class FacturaModule {}
+export class FacturaModule { }
