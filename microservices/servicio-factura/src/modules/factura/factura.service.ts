@@ -163,7 +163,7 @@ export class FacturaService {
 
     // Método para comunicarse con servicio-producto
     private async obtenerPrecioProducto(codProducto: number): Promise<number> {
-        const baseUrl = process.env.PRODUCTO_SERVICE_URL || 'http://localhost:8000';
+        const baseUrl = process.env.PRODUCTO_SERVICE_URL || 'http://localhost:3002';
         const url = `${baseUrl}/api/${codProducto}`;
 
         try {
